@@ -1,0 +1,97 @@
+---
+title: "Temperature and Seoul Bike"
+output: pdf_document
+---
+Aim: 
+
+* To demonstrate how to do a machine learning in R for beginners (no prerequisite knowledge)
+
+* To use a linear regression model to predict Seoul bike rent demand from temperature
+
+* Only necessary codes are included and codes such as making plot neat are excluded
+
+Code written by: Ggodburi AI (Youtuber)
+
+* URL for the youtube: https://www.youtube.com/channel/UCUdyx4YZ_bkBmBS3aq_7Xag
+
+Data set source: 
+
+* Sathishkumar V E, Jangwoo Park, and Yongyun Cho. 'Using data mining techniques for bike sharing demand prediction in metropolitan city.' Computer Communications, Vol.153, pp.353-366, March, 2020
+
+* Sathishkumar V E and Yongyun Cho. 'A rule-based model for Seoul Bike sharing demand prediction using weather data' European Journal of Remote Sensing, pp. 1-18, Feb, 2020
+
+* Dua, D. and Graff, C. (2019). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
+
+* URL: https://archive.ics.uci.edu/ml/datasets/Seoul+Bike+Sharing+Demand
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data 
+
+```{r}
+# Before loading data, the two column names need to be changed for the encoding issue.
+# Temperature(?C) -> Temperature
+# Dew point temperature(?C) -> Dew point temperature
+
+data_frame = read.csv('SeoulBikeData.csv')
+summary(data_frame)
+```
+
+```{r}
+head(data_frame)
+```
+
+
+## Scatter plot between Temperature and Rented bike count 
+```{r}
+plot(x=data_frame$Temperature ,y=data_frame$Rented.Bike.Count)
+```
+
+## Modeling by using linear regression (a basic form of machine learning)
+```{r}
+# y(bike rent count) = a (parameter) * x (temperature) + b (parameter)
+# by using regression, we can derive parameters a and b which represent the data best 
+# (minimizing the errors)
+
+# formula argument format = Y ~ X
+linear_regression_model = glm(formula = Rented.Bike.Count ~ Temperature, data=data_frame) 
+summary(linear_regression_model)
+```
+
+## Predict the bike rent count by using the derived $a$ and $b$ for any temperature 
+
+```{r}
+temp_temperature = 23
+a = 29.0811
+b = 329.9525
+
+y = a * temp_temperature + b
+y
+```
+
+```{r}
+predict(linear_regression_model, newdata=data.frame(Temperature=c(23)))
+```
+## Plot the best fit line in red using the derived parameters  
+```{r}
+plot(x=data_frame$Temperature ,y=data_frame$Rented.Bike.Count)
+abline(a=b,b=a, col='red')
+```
+
+## Show several predicted bike counts according to given temperatures
+```{r}
+temperature_list = c(-10,0,10,20,30,40)
+pred_list = predict(linear_regression_model, newdata=data.frame(Temperature=temperature_list))
+
+data.frame(Temperature=temperature_list, Pred_bike_count=pred_list)
+                                                
+```
+
+
+
+
+
+
